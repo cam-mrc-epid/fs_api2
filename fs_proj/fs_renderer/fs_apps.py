@@ -13,7 +13,6 @@ class Question(objectifier.Question):
         self.plugin = ''
         super(Question, self).__init__(question_object, app_object, section_object)
         self.validator = self.set_validator()
-        self.model = self.set_model()
 
     def set_validator(self):
         try:
@@ -51,21 +50,6 @@ class Question(objectifier.Question):
                 # self.app_object.plugins['questioon_plugins'].append(self.rendering_hints[key].strip())
                 # self.section.plugins.append(self.rendering_hints[key].strip())
         self.rendering_hints[key] = self.rendering_hints[key].strip()
-
-    def set_model(self):
-        if self.variable in self.app_object.db_mapping.keys():
-            variable = self.app_object.db_mapping[self.variable]
-        else:
-            variable = self.variable
-        if self.app_object.models:
-            section_model = self.app_object.model_mapping[int(self.section.position)]
-            if variable in section_model._meta.get_all_field_names():
-                self.model = section_model
-            elif 'multi' in self.rendering_hints.keys():
-                if variable in self.app_object.table_model_mapping[self.rendering_hints['multi']]._meta.get_all_field_names():
-                    self.model = self.app_object.table_model_mapping[self.rendering_hints['multi']]
-            else:
-                self.model = None
 
     def get_template(self, selection):
         return {'radio': 'fs_renderer/radio.html',
@@ -172,11 +156,6 @@ class Application(objectifier.Application):
     def __init__(self, name, xml_path):
         self.models = local_settings.MODELS
         self.custom = local_settings.CUSTOM
-        self.mapping = local_settings.SECTION_MAPPING
-        self.db_mapping = local_settings.DB_MAPPING
-        self.model_mapping = local_settings.MODEL_MAPPING
-        self.model_form_mapping = local_settings.MODEL_FORM_MAPPING
-        self.table_model_mapping = local_settings.TABLE_MODEL_MAPPING
         self.testing = local_settings.TESTING
         self.plugins = []
         super(Application, self).__init__(name, xml_path)
