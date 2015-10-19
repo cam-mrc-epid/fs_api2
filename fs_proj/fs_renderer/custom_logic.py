@@ -1,8 +1,6 @@
-import sqlsoup
 import arrow
 import fs_apps
 import local_settings
-# from .models import Surgery, Volunteer
 from fs_querysets import QuerySet
 from django.forms.models import model_to_dict
 
