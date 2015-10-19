@@ -1,6 +1,0 @@
-{% include 'fs_renderer/multi.html' %}
-<select id="{{question.var_id}}" name="{{question.variable}}">
-{% for item in question.template_args.options %}
-    <option id="{{item.text}}" value="{{item.value}}" var_value="{{ question.var_value }}"  {% if item.value|add:"0" == question.var_value|add:"0" %} selected {% endif %}>{{item.text}}  </option>
-{% endfor %}
-</select>

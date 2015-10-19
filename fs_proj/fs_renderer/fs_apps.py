@@ -52,14 +52,7 @@ class Question(objectifier.Question):
         self.rendering_hints[key] = self.rendering_hints[key].strip()
 
     def get_template(self, selection):
-        return {'radio': 'fs_renderer/radio.html',
-                'dropdown': 'fs_renderer/select.html',
-                'text': 'fs_renderer/text.html',
-                'multiline': 'fs_renderer/textarea.html',
-                'range': 'fs_renderer/range.html',
-                'datalist': 'fs_renderer/datalist.html',
-                'search': 'fs_renderer/search.html',
-                'altradio': 'fs_renderer/alt_radio.html',
+        return {'altradio': 'fs_renderer/alt_radio.html',
                 'altdropdown': 'fs_renderer/alt_select.html',
                 'alttext': 'fs_renderer/alt_text.html',
                 'altmultiline': 'fs_renderer/alt_textarea.html',
@@ -69,12 +62,8 @@ class Question(objectifier.Question):
                 'altpassword': 'fs_renderer/text.html',}[selection]
 
     def set_template(self):
-        if local_settings.QUESTIONNAIRE:
-            qtype = 'alt' + self.rendering_hints['qtype']
-            self.template = self.get_template(qtype)
-        else:
-            self.template = self.get_template(self.rendering_hints['qtype'])
-
+        qtype = 'alt' + self.rendering_hints['qtype']
+        self.template = self.get_template(qtype)
 
 class QuestionGroup(objectifier.QuestionGroup):
     def __init__(self, question_group_object, app_object, section_object):
@@ -154,7 +143,6 @@ class Section(objectifier.Section):
 
 class Application(objectifier.Application):
     def __init__(self, name, xml_path):
-        self.models = local_settings.MODELS
         self.custom = local_settings.CUSTOM
         self.testing = local_settings.TESTING
         self.plugins = []
