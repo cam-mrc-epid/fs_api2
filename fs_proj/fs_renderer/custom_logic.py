@@ -1,7 +1,6 @@
 import arrow
 import fs_apps
 import local_settings
-from fs_querysets import QuerySet
 from django.forms.models import model_to_dict
 
 
@@ -62,7 +61,7 @@ class CustomApplication(fs_apps.Application):
         if self.models:
             # data = model_to_dict(self.model_mapping[int(section_number)].objects.get(id=id_variable_value))
             data = self.model_mapping[int(section_number)].objects.filter(surname__contains=search_term) 
-        else:
-            queryset = QuerySet(table_name=self.get_table_name(section_number))
-            data = queryset.filter('surname', search_term)
+        #else:
+        #    queryset = QuerySet(table_name=self.get_table_name(section_number))
+        #    data = queryset.filter('surname', search_term)
         return data
