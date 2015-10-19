@@ -6,8 +6,7 @@ import simplejson
 import local_settings
 from django import forms
 from django.forms.models import model_to_dict
-from .fs_validator import Validator
-from .fs_querysets import QuerySet
+
 
 class Question(objectifier.Question):
     def __init__(self, question_object, app_object, section_object):
@@ -199,105 +198,6 @@ class Application(objectifier.Application):
                 self.plugins.append(self.rendering_hints[key].strip())
         self.rendering_hints[key] = self.rendering_hints[key].strip()
 
-    def get_data(self, section_number, id_variable, id_variable_value):
-        if self.models:
-            data = model_to_dict(self.model_mapping[int(section_number)].objects.get(id=id_variable_value))
-        else:
-            queryset = QuerySet(table_name=self.get_table_name(section_number),
-                                id_variable_value=id_variable_value)
-            data = queryset.get()
-        return data
-
-    def insert_data(self, section_number, id_variable, body):
-        json_dict = simplejson.JSONDecoder().decode(body)
-        if self.models:
-            json_dict = self.pre_process_keys(json_dict)
-            validator = self.model_form_mapping[int(section_number)](json_dict)
-            if validator.is_valid():
-                json_dict = self.post_process_keys(json_dict)
-                model = self.model_mapping[int(section_number)].objects.create(**json_dict)
-                data = model_to_dict(model)
-            else:
-                errors = {}
-                for field in validator:
-                    errors[field.label] = field.errors
-                data = json_dict
-                data['errors'] = 'errors'
-        else:
-            if 'search' in json_dict.keys():
-                data = self.search(json_dict['search'], section_number)
-            else:
-                validator = Validator(self.validator, json_dict)
-                if validator.is_valid():
-                    for k in json_dict.keys():
-                        if k in self.db_mapping.keys():
-                            json_dict[self.db_mapping[k]] = json_dict[k]
-                            json_dict.pop(k)
-                    queryset = QuerySet(table_name=self.get_table_name(section_number))
-                    data = queryset.create(json_dict)
-                else:
-                    for k in json_dict.keys():
-                        if k in self.db_mapping.keys():
-                            json_dict[self.db_mapping[k]] = json_dict[k]
-                            json_dict.pop(k)
-                    data = json_dict
-                    data['errors'] = validator.errors
-        return data
-
-    def pre_process_keys(self, json_dict):
-        pass
-
-    def post_process_keys(self, json_dict):
-        pass
-
-    def update_data(self, section_number, id_variable, id_variable_value,
-                    body):
-        if self.models:
-            json_dict = simplejson.JSONDecoder().decode(body)
-            orig_json_dict = json_dict
-            json_dict = self.pre_process_keys(json_dict)
-            for k in json_dict.keys():
-                if k in self.db_mapping.keys():
-                    json_dict[self.db_mapping[k]] = json_dict[k]
-                    json_dict.pop(k)
-            validator_form = self.model_form_mapping[int(section_number)](json_dict)
-            if validator_form.is_valid():
-                self.model_mapping[int(section_number)].objects.filter(pk=id_variable_value).update(**json_dict)
-                data = model_to_dict(self.model_mapping[int(section_number)].objects.get(id=id_variable_value))
-            else:
-                errors = {}
-                for field in validator_form:
-                    errors[field.label] = field.errors.as_text()
-                data = orig_json_dict
-                data['errors'] = errors
-        else:
-            json_dict = simplejson.JSONDecoder().decode(body)
-            validator = Validator(self.validator, json_dict)
-            if validator.is_valid():
-                for k in json_dict.keys():
-                    if k in self.db_mapping.keys():
-                        json_dict[self.db_mapping[k]] = json_dict[k]
-                        json_dict.pop(k)
-                queryset = QuerySet(table_name=self.get_table_name(section_number))
-                queryset.update(json_dict, id_variable_value)
-                data = queryset.data
-            else:
-                for k in json_dict.keys():
-                    if k in self.db_mapping.keys():
-                        json_dict[self.db_mapping[k]] = json_dict[k]
-                        json_dict.pop(k)
-                data = json_dict
-                data['errors'] = validator.errors
-        return data
-
-    def delete_data(self, section_number, id_variable, id_variable_value):
-        if self.models:
-            self.model_mapping[int(section)].objects.get(id=id_variable_value).delete()
-        else:
-            queryset = QuerySet(table_name=self.get_table_name(section_number),
-                                id_variable_value=id_variable_value)
-            queryset.delete()
-        return
 
     def get_table_name(self, section_number):
         return self.mapping[int(section_number)]
