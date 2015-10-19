@@ -7,40 +7,6 @@ from fs_querysets import QuerySet
 from django.forms.models import model_to_dict
 
 
-class CustomDataPrep(fs_apps.DataPrep):
-    def __init__(self, section, data):
-        super(CustomDataPrep, self).__init__(section, data)
-        self.Question = fs_apps.Question
-
-    def get_multi_data(self, table, id):
-        # should really have a models based version for this too...?
-       qs = QuerySet(table_name='volunteers', related_table='appointments', related_field='volunteers_id')
-       qs.get(id)
-       objs = qs.related_set()
-       return objs
-        # volunteer = Volunteer.objects.get(pk=id)
-        # appts = volunteer.appointment_set.all()
-        # result = []
-        # for appt in appts:
-        #     res = model_to_dict(appt)
-        #     result.append(res)
-        # return result
-
-    def add_question_value(self, q):
-        if q.variable == 'surgery':
-            if local_settings.MODELS is True:
-                q.var_value = self.data['surgeries']
-            else:
-                q.var_value = self.data['surgeries_id']
-        elif q.variable == "diabetes":
-            q.var_value = self.data['diabetes_diagnosed']
-        else:
-            q.var_value = self.data[q.variable]
-
-        # self.section.api[q.variable] = q.var_value
-        # not using thw api variable at present
-
-
 class CustomQuestion(fs_apps.Question):
     def __init__(self, question_object, app_object, section_object):
         self.surgeries = self.get_surgeries()
