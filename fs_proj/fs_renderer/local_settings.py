@@ -41,7 +41,7 @@ TABLE_MODEL_MAPPING = {}
 DATABASE = 'mysql+pymysql://david:david@localhost:3306/mydb'
 
 # XML_FILE to load
-XML_FILE = 'xmlfiles/Fenland.xml'
+XML_FILE = 'xmlfiles/FamHist.xml'
 # XML_FILE = 'C:/Fenland/xmlfiles/RPAQtest3_v10.xml' # CHANGE 
 
 
