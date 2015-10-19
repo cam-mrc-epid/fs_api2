@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'fs_renderer',
     'django_extensions',
-    'rest_framework',
     'questionnaire',
     'import_export',
 )

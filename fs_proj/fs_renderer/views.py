@@ -3,9 +3,6 @@ from django.http import HttpResponseNotFound
 from django.views.generic import View
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from custom_logic import CustomApplication
 from django.views import generic
 from questionnaire.models import Results, Users

@@ -2,7 +2,6 @@ from copy import deepcopy
 from itertools import chain
 from xml_objectifier import objectifier
 import datetime
-import simplejson
 import local_settings
 from django import forms
 from django.forms.models import model_to_dict
