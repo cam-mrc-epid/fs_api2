@@ -89,7 +89,7 @@ class AltHTMLView(View):
             data={}
             for q in q_data:
                 data[q.var_name] = q.var_value
-            if not section.errors:
+            if not section_obj.errors:
                 result['data'] = data
             else:
                 result['data'] = myDict
